@@ -21,7 +21,7 @@ plotly==5.24.1
 kaleido==0.2.1            # Plotly static image export
 
 # Web UI
-gradio==4.44.1
+gradio                     # Use latest Gradio 5 for stability
 
 # Database
 # sqlite3 is built into Python — no pip install needed
@@ -29,4 +29,4 @@ gradio==4.44.1
 # Utilities
 python-dotenv==1.0.1
 tenacity==8.5.0           # Retry logic for API calls
-huggingface-hub==0.25.2   # Pin for Gradio compatibility
+huggingface-hub           # Use latest stable
