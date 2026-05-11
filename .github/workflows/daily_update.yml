@@ -13,16 +13,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          lfs: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install Dependencies & LFS
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          git lfs install
 
       - name: Run Collection Script
         run: python scripts/collect_all.py
