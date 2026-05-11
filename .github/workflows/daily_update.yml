@@ -30,10 +30,17 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           DB_PATH: database/market_analyzer.db
 
-      - name: Commit and Push Changes
+      - name: Commit and Push Changes to GitHub
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add database/market_analyzer.db
           git commit -m "Automated daily market snapshot [skip ci]" || echo "No changes to commit"
           git push
+
+      - name: Push to HuggingFace Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://UygarTatar:$HF_TOKEN@huggingface.co/spaces/UygarTatar/market-trend-analyzer
+          git push -f hf main

@@ -1,0 +1,23 @@
+name: Sync to HuggingFace
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync_to_hf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to HuggingFace Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://UygarTatar:$HF_TOKEN@huggingface.co/spaces/UygarTatar/market-trend-analyzer
+          git push -f hf main
