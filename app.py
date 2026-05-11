@@ -227,6 +227,17 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="slate", neutral_hue="slate"), c
                 with gr.Accordion("Agent Reasoning Log", open=False):
                     agent_logs = gr.TextArea(label="Internal Thoughts", interactive=False, lines=10)
                 
+                gr.Examples(
+                    examples=[
+                        ["Search for recent mobile games that have jumped significantly in rank. Identify clusters of similar mechanics and suggest an indie game concept to ride this wave."],
+                        ["Which genres are trending this week across mobile and PC? Look for cross-platform spillover."],
+                        ["What are the top-performing non-gaming apps? Analyze their monetization models."],
+                        ["Identify market gaps in the PC survival genre based on recent Steam releases and Reddit sentiment."]
+                    ],
+                    inputs=user_input,
+                    label="Strategic Presets"
+                )
+                
                 output_text = gr.Markdown(label="Final Report")
 
             # Right Column: Live Health & Visuals
