@@ -1,8 +1,8 @@
 ---
 title: "ONYX: Agentic Market Intelligence"
 emoji: "🌌"
-colorFrom: "slate"
-colorTo: "black"
+colorFrom: blue
+colorTo: indigo
 sdk: gradio
 sdk_version: 4.44.0
 python_version: 3.10.12
