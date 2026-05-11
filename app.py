@@ -196,7 +196,7 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="slate", neutral_hue="slate"), c
     
     with gr.Column(elem_classes="container"):
         # Header Section
-        with gr.Div(elem_classes="header"):
+        with gr.Column(elem_classes="header"):
             gr.Markdown("# 🌌 ONYX Market Intelligence Dashboard")
             gr.Markdown("### Agentic Digital Market Trend Analyzer")
             gr.Markdown("**Track the Pulse of Mobile Apps, Mobile Games, and PC Games autonomously.**")
