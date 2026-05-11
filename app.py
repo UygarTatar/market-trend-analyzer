@@ -186,20 +186,7 @@ def analyze_market(query, progress=gr.Progress()):
 
         yield error_msg, None, None, None
 
-# --- UI ASSEMBLY ---
-with gr.Blocks(title="ONYX | Market Intelligence") as demo:
-    with gr.Column(elem_classes="title-header"):
-        gr.Markdown("# ONYX MARKET INTELLIGENCE")
-        gr.Markdown("Agentic Trend Analysis & Deep Market Synthesis")
-
-    with gr.Row():
-        with gr.Column(scale=1):
-            with gr.Column(elem_classes="query-container"):
-                query_input = gr.Textbox(
-# ---------------------------------------------------------------------------
-# Gradio UI Implementation (ONYX STEALH DESIGN)
-# ---------------------------------------------------------------------------
-
+# --- UI ASSEMBLY (ONYX STEALTH DESIGN) ---
 with gr.Blocks(theme=gr.themes.Soft(primary_hue="slate", neutral_hue="slate"), css="""
     .container { max-width: 1100px; margin: auto; padding-top: 20px; }
     .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
