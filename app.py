@@ -301,5 +301,5 @@ if __name__ == "__main__":
     if not os.getenv("GOOGLE_API_KEY"):
         print("[CRITICAL ERROR] GOOGLE_API_KEY not found in environment.")
     
-    # Launch with public access enabled for HuggingFace
-    demo.launch(share=False, server_name="0.0.0.0", server_port=7860)
+    # Launch the Intelligence Dashboard
+    demo.launch()
