@@ -40,9 +40,9 @@ jobs:
           git commit -m "Automated daily market snapshot [skip ci]" || echo "No changes to commit"
           git push
 
-      - name: Push to HuggingFace Spaces
+      - name: Push to HuggingFace (Python API)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://UygarTatar:$HF_TOKEN@huggingface.co/spaces/UygarTatar/market-trend-analyzer
-          git push -f hf main
+          pip install huggingface_hub
+          python -c "from huggingface_hub import HfApi; api = HfApi(); api.upload_file(path_or_fileobj='database/market_analyzer.db', path_in_repo='database/market_analyzer.db', repo_id='UygarTatar/market-trend-analyzer', repo_type='space', token='${{ secrets.HF_TOKEN }}')"
