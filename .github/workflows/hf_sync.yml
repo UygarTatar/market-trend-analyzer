@@ -18,9 +18,8 @@ jobs:
       - name: Install Git LFS
         run: git lfs install
 
-      - name: Push to HuggingFace Spaces (CLI Sync)
+      - name: Push to HuggingFace Spaces (HF CLI Sync)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          pip install huggingface_hub
-          huggingface-cli upload UygarTatar/market-trend-analyzer . . --repo-type=space --token=$HF_TOKEN
+          hf upload UygarTatar/market-trend-analyzer . . --repo-type=space --token=$HF_TOKEN
