@@ -32,15 +32,10 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           DB_PATH: database/market_analyzer.db
 
-      - name: Commit and Push Changes to GitHub
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add database/market_analyzer.db
-          git commit -m "Automated daily market snapshot [skip ci]" || echo "No changes to commit"
-          git push
+      # Note: We skip committing the database to GitHub to avoid LFS issues and .gitignore conflicts.
+      # The HuggingFace sync below handles the live data deployment.
 
-      - name: Push to HuggingFace (Stable Python API)
+      - name: Push to HuggingFace (Direct Data Sync)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
