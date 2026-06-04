@@ -17,5 +17,20 @@ class TestAgentTools(unittest.TestCase):
         self.assertIn("query", collect_pc_game_data.args)
         self.assertIn("category", compute_category_trends.args)
 
+    def test_sanitizers(self):
+        from agent.tools import _sanitize_country, _sanitize_category
+        # Test country sanitizers
+        self.assertEqual(_sanitize_country("us"), "us")
+        self.assertEqual(_sanitize_country("US"), "us")
+        self.assertEqual(_sanitize_country("country='us'"), "us")
+        self.assertEqual(_sanitize_country("country=\"us\""), "us")
+        self.assertEqual(_sanitize_country("{'country': 'us'}"), "us")
+        self.assertEqual(_sanitize_country("invalid"), "us") # default fallback
+        
+        # Test category sanitizers
+        self.assertEqual(_sanitize_category("mobile_games"), "mobile_games")
+        self.assertEqual(_sanitize_category("category='mobile_games'"), "mobile_games")
+        self.assertEqual(_sanitize_category("category=\"mobile_games\""), "mobile_games")
+
 if __name__ == "__main__":
     unittest.main()

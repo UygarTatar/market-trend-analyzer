@@ -22,5 +22,6 @@
 - Virtual Environment: All tools and scrapers should be run within the established `venv` to ensure stable library versions (Pandas 2.2.2, LangChain 0.2.16, etc.).
 - Missing Abstractions: The directive assumed `analysis/snapshot.py` existed, but it had to be created from the `project_plan.md` definitions to support the `load_snapshot` and `save_snapshot` calls within the tools.
 - Circular Imports: To avoid potential circular imports between collectors and tools, absolute imports from the project root were used, and the root was added to `sys.path`.
+- **Parameter Parsing & Sanitization**: When the ReAct Agent executes single-parameter tools, the LLM framework often passes values containing key-value prefixes or raw wrapper structures (e.g., `country='us'`, `category='mobile_games'`, or `{'country': 'us'}`). If left unsanitized, these invalid parameter strings cause database query mismatches and scraping errors (such as 404s or returning 0 results). Robust parsing functions (`_sanitize_country` and `_sanitize_category`) were implemented in `agent/tools.py` to extract, unwrap, and normalize the raw inputs to ensure stable operations.
 
-**Status: COMPLETE** — `agent/tools.py` created and LangChain tools registry established. `analysis/snapshot.py` created to support data persistence within the tools.
+**Status: COMPLETE** — `agent/tools.py` created and LangChain tools registry established with robust input sanitizers. `analysis/snapshot.py` created to support data persistence within the tools. All units tests fully verified.

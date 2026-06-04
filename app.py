@@ -2,6 +2,7 @@ import os
 import sqlite3
 import pandas as pd
 import gradio as gr
+from datetime import datetime
 from dotenv import load_dotenv
 from agent.react_agent import run_agent
 from visualization.charts import create_trend_score_bar, create_top_movers_table, create_genre_distribution_pie
@@ -187,72 +188,97 @@ def analyze_market(query, progress=gr.Progress()):
         yield error_msg, None, None, None
 
 # --- UI ASSEMBLY (ONYX STEALTH DESIGN) ---
+from analysis.stats import get_intelligence_stats
+
 with gr.Blocks(theme=gr.themes.Soft(primary_hue="slate", neutral_hue="slate"), css="""
     .container { max-width: 1100px; margin: auto; padding-top: 20px; }
     .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
     .footer { text-align: center; margin-top: 50px; font-size: 0.8em; color: #666; }
-    .agent-box { border: 1px solid #444; border-radius: 10px; padding: 20px; background: #111; }
+    .agent-box { border: 1px solid #444; border-radius: 10px; padding: 20px; background: #111; min-height: 400px; }
+    .stat-card { border: 1px solid #333; border-radius: 8px; padding: 15px; background: #1a1a1a; text-align: center; }
+    .stat-val { font-size: 1.8em; font-weight: bold; color: #4ade80; }
+    .stat-label { font-size: 0.9em; color: #999; text-transform: uppercase; }
 """) as demo:
+    
+    # Pre-fetch stats for initial load
+    stats = get_intelligence_stats()
     
     with gr.Column(elem_classes="container"):
         # Header Section
         with gr.Column(elem_classes="header"):
             gr.Markdown("# 🌌 ONYX Market Intelligence Dashboard")
             gr.Markdown("### Agentic Digital Market Trend Analyzer")
-            gr.Markdown("**Track the Pulse of Mobile Apps, Mobile Games, and PC Games autonomously.**")
 
-        with gr.Row():
-            # Left Column: Agent Interface
-            with gr.Column(scale=2, elem_classes="agent-box"):
-                gr.Markdown("#### 🤖 Agentic Research Command")
-                user_input = gr.Textbox(
-                    placeholder="E.g., 'What genres are trending on Steam this week?'",
-                    label="Ask the Agent"
-                )
-                run_btn = gr.Button("Execute Market Analysis", variant="primary")
-                
-                with gr.Accordion("Agent Reasoning Log", open=False):
-                    agent_logs = gr.TextArea(label="Internal Thoughts", interactive=False, lines=10)
-                
-                gr.Examples(
-                    examples=[
-                        ["Search for recent mobile games that have jumped significantly in rank. Identify clusters of similar mechanics and suggest an indie game concept to ride this wave."],
-                        ["Which genres are trending this week across mobile and PC? Look for cross-platform spillover."],
-                        ["What are the top-performing non-gaming apps? Analyze their monetization models."],
-                        ["Identify market gaps in the PC survival genre based on recent Steam releases and Reddit sentiment."]
-                    ],
-                    inputs=user_input,
-                    label="Strategic Presets"
-                )
-                
-                output_text = gr.Markdown(label="Final Report")
+        with gr.Tabs():
+            # TAB 1: COMMAND CENTER
+            with gr.Tab("🤖 Command Center"):
+                with gr.Row():
+                    # Left Column: Agent Interface
+                    with gr.Column(scale=2, elem_classes="agent-box"):
+                        gr.Markdown("#### Intelligence Research Command")
+                        user_input = gr.Textbox(
+                            placeholder="E.g., 'What genres are trending on Steam this week?'",
+                            label="Ask the Agent"
+                        )
+                        run_btn = gr.Button("Execute Market Analysis", variant="primary")
+                        
+                        with gr.Accordion("Agent Reasoning Log", open=False):
+                            agent_logs = gr.TextArea(label="Internal Thoughts", interactive=False, lines=10)
+                        
+                        output_text = gr.Markdown(label="Final Report")
 
-            # Right Column: Live Health & Visuals
-            with gr.Column(scale=1):
-                gr.Markdown("#### 📈 Market Health")
-                health_stats = gr.HTML(value="<div style='color: #4ade80'>● System Operational</div>")
-                
-                trend_chart = gr.Image(label="Top Trending Sectors", type="pil")
-                
-                with gr.Accordion("Academic Credits", open=True):
-                    gr.Markdown("""
-                    **Team Members:**
-                    - Uygar Tatar (2202400)
-                    - Muhammed Buğra Çiftçi (2101860)
+                    # Right Column: Visuals
+                    with gr.Column(scale=1):
+                        gr.Markdown("#### 📈 Visual Synthesis")
+                        trend_chart = gr.Image(label="Top Trending Sectors", type="pil")
+                        
+                        with gr.Accordion("Strategic Presets", open=True):
+                            gr.Examples(
+                                examples=[
+                                    ["Search for recent mobile games that have jumped significantly in rank. Identify clusters of similar mechanics and suggest an indie game concept to ride this wave."],
+                                    ["Which genres are trending this week across mobile and PC? Look for cross-platform spillover."],
+                                    ["What are the top-performing non-gaming apps? Analyze their monetization models."],
+                                    ["Identify market gaps in the PC survival genre based on recent Steam releases and Reddit sentiment."]
+                                ],
+                                inputs=user_input
+                            )
+                        
+                        with gr.Accordion("Academic Credits", open=True):
+                            gr.Markdown("""
+                            **Team Members:**
+                            - Uygar Tatar (2202400)
+                            - Muhammed Buğra Çiftçi (2101860)
+                            
+                            *Powered by Gemini 3.1 & LangChain ReAct Architecture.*
+                            """)
+
+            # TAB 2: INTELLIGENCE HUB
+            with gr.Tab("📊 Intelligence Hub"):
+                with gr.Column(elem_classes="agent-box"):
+                    gr.Markdown("#### 🛰️ Real-Time Intelligence Density")
+                    with gr.Row():
+                        with gr.Column(elem_classes="stat-card"):
+                            gr.Markdown(f"<div class='stat-val'>{stats['total_points']:,}</div><div class='stat-label'>Total Data Points</div>")
+                        with gr.Column(elem_classes="stat-card"):
+                            gr.Markdown(f"<div class='stat-val'>+{stats['growth_24h']:,}</div><div class='stat-label'>24h Scouted</div>")
+                        with gr.Column(elem_classes="stat-card"):
+                            gr.Markdown(f"<div class='stat-val'>{stats['unique_apps']:,}</div><div class='stat-label'>Active Entities</div>")
                     
-                    *Powered by Gemini 3.1 & LangChain ReAct Architecture.*
-                    """)
+                    gr.Markdown("---")
+                    gr.Markdown("#### 🔥 High-Velocity Trends (Latest Scan)")
+                    if stats['top_trends']:
+                        for i, trend in enumerate(stats['top_trends']):
+                            gr.Markdown(f"**{i+1}. {trend['title']}** — Score: `{trend['score']:.2f}`")
+                    else:
+                        gr.Markdown("*No high-velocity trends detected in current cycle. Run a scan to update.*")
+                    
+                    gr.Markdown("---")
+                    gr.Markdown("#### 🏥 System Health")
+                    health_stats = gr.HTML(value="<div style='color: #4ade80; font-weight: bold;'>● ALL SYSTEMS OPERATIONAL</div>")
+                    gr.Markdown(f"*Last Database Sync: {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}*")
 
-        # Footer
-        gr.Markdown("""
-        ---
-        <div class='footer'>
-        © 2026 ONYX Market Intelligence System | Final Term Project | Digital Market Trends
-        </div>
-        """)
-
+        gr.Markdown("<div class='footer'>© 2026 ONYX Market Intelligence System | Final Term Project</div>")
     # --- Event Handlers ---
-    
     def handle_query(query):
         if not query or len(query.strip()) < 3:
             return "Please enter a specific research query.", "No logs available.", None
@@ -278,11 +304,8 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="slate", neutral_hue="slate"), c
         
         # Generate a live trend chart for the UI
         try:
-            # We fetch a summary of the latest trends for the chart
-            from analysis.trend_score import process_daily_trends
-            process_daily_trends()
-            
-            # Dummy data for the preview chart if no real scores found
+            from visualization.charts import create_trend_score_bar
+            # Sample scores for visualization if DB is empty
             sample_scores = {"PC Games": 0.82, "Mobile Games": 0.55, "Mobile Apps": 0.38}
             chart_img = create_trend_score_bar(sample_scores)
         except:

@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from collectors.pc_games import scrape_steam_top_sellers
-from collectors.mobile_games import scrape_google_play_games
+from collectors.pc_games import fetch_steam_top_sellers
+from collectors.mobile_apps import fetch_google_play_top_apps
 
 class TestCollectors(unittest.TestCase):
     """
@@ -10,7 +10,7 @@ class TestCollectors(unittest.TestCase):
     
     def test_steam_scraper(self):
         print("\nTesting Steam Scraper...")
-        df = scrape_steam_top_sellers(limit=5)
+        df = fetch_steam_top_sellers(count=5)
         self.assertIsInstance(df, pd.DataFrame)
         self.assertGreater(len(df), 0)
         self.assertIn('title', df.columns)
@@ -19,7 +19,7 @@ class TestCollectors(unittest.TestCase):
     def test_google_play_scraper(self):
         print("\nTesting Google Play Scraper...")
         # Only testing a small subset to avoid rate limits
-        df = scrape_google_play_games(country='us', limit=5)
+        df = fetch_google_play_top_apps(count=5, country='us')
         self.assertIsInstance(df, pd.DataFrame)
         self.assertGreater(len(df), 0)
         self.assertIn('title', df.columns)

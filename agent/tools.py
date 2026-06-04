@@ -8,6 +8,31 @@ from langchain.tools import tool
 from collectors import mobile_apps, mobile_games, pc_games, reddit_sentiment
 from analysis import snapshot, trend_score
 
+def _sanitize_country(country: str) -> str:
+    """Helper to clean country input, handling cases like country='us', {'country': 'us'}, etc."""
+    c = str(country).strip().lower()
+    if "country" in c:
+        for char in ("=", ":"):
+            if char in c:
+                c = c.split(char)[-1].strip()
+                break
+    c = c.replace("'", "").replace('"', "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").strip()
+    # Ensure it's a 2-character alpha string (like 'us', 'gb'), default to 'us'
+    if len(c) == 2 and c.isalpha():
+        return c
+    return "us"
+
+def _sanitize_category(category: str) -> str:
+    """Helper to clean category input, handling cases like category='mobile_games', etc."""
+    c = str(category).strip().lower()
+    if "category" in c:
+        for char in ("=", ":"):
+            if char in c:
+                c = c.split(char)[-1].strip()
+                break
+    c = c.replace("'", "").replace('"', "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").strip()
+    return c
+
 @tool
 def collect_mobile_app_data(country: str = "us") -> str:
     """
@@ -15,7 +40,7 @@ def collect_mobile_app_data(country: str = "us") -> str:
     It scrapes live app data and saves the result to the database as snapshots.
     """
     # Sanitize input
-    country = str(country).strip().strip("'").strip('"')
+    country = _sanitize_country(country)
     gp_df = mobile_apps.fetch_google_play_top_apps(count=50, country=country)
     ios_df = mobile_apps.fetch_app_store_top_apps(count=50, country=country)
     
@@ -31,7 +56,7 @@ def collect_mobile_game_data(country: str = "us") -> str:
     It hits both Google Play and the App Store, and saves the data as a DB snapshot.
     """
     # Sanitize input
-    country = str(country).strip().strip("'").strip('"')
+    country = _sanitize_country(country)
     df = mobile_games.fetch_all_mobile_game_categories(count_per_cat=20, country=country)
     snapshot.save_snapshot(df, "mobile_games")
     return f"Successfully collected {len(df)} mobile games across genres and saved snapshot to DB."
@@ -54,7 +79,7 @@ def compute_category_trends(category: str) -> str:
     from the database and write out the computed trend scores.
     """
     # Sanitize input
-    category = str(category).strip().strip("'").strip('"')
+    category = _sanitize_category(category)
     df = snapshot.load_snapshot(category, days_ago=0)
     
     # Process all trends in DB
