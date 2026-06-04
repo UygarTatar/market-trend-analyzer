@@ -11,7 +11,7 @@ import sqlite3
 import os
 
 # Allow override via .env (e.g. DB_PATH=database/market_analyzer.db)
-_path = os.getenv("DB_PATH", "market_data.db")
+_path = os.getenv("DB_PATH", "database/market_analyzer.db")
 # If relative, make it relative to the PROJECT ROOT, not the database folder
 if not os.path.isabs(_path):
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
