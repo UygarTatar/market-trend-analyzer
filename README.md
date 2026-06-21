@@ -15,7 +15,8 @@ pinned: true
 
 **Team:** Uygar Tatar (2202400) · Muhammed Buğra Çiftçi (2101860)  
 **Course:** Agentic AI Systems · **Deadline:** May 31, 2026  
-**Deployment:** [HuggingFace Spaces (Gradio)](https://huggingface.co/spaces/UygarTatar/market-trend-analyzer)
+**Deployment:** [HuggingFace Spaces (Gradio)](https://huggingface.co/spaces/UygarTatar/market-trend-analyzer)  
+**Project Documentation:** [📋 Executive Summary](EXECUTIVE_SUMMARY.md) · [⚙️ Practitioner's Notes](PRACTITIONERS_NOTES.md)
 
 ---
 
