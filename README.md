@@ -48,6 +48,31 @@ In the fast-moving digital economy, understanding cross-platform trends in mobil
 ### 2. High-Level System Architecture
 ONYX is designed around a **3-Layer Architecture** to bridge the gap between probabilistic AI reasoning and deterministic software execution:
 
+```
+                  ┌────────────────────────────────────────┐
+                  │          USER QUERY (Gradio UI)        │
+                  └───────────────────┬────────────────────┘
+                                      │
+                                      ▼
+                  ┌────────────────────────────────────────┐
+                  │    ORCHESTRATION LAYER (ReAct Agent)   │
+                  │        (gemini-3.1-flash-lite)         │
+                  └───────────────────┬────────────────────┘
+                                      │  Uses 13 SOP Directives
+                                      ▼
+                  ┌────────────────────────────────────────┐
+                  │     EXECUTION LAYER (Python Tools)     │
+                  │  • Data Ingestion   • Trend Scoring    │
+                  │  • SQLite Storage   • Report Generator │
+                  └───────────────────┬────────────────────┘
+                                      │
+                                      ▼
+                  ┌────────────────────────────────────────┐
+                  │      EVALUATOR & REVISION LOOP         │
+                  │    (Auto-evaluates & rewrites report)  │
+                  └────────────────────────────────────────┘
+```
+
 *   **Layer 1: Directive (SOPs):** Thirteen Standard Operating Procedures (SOPs) written in Markdown reside in `directives/`. They govern the precise rules and workflows for every stage of the system.
 *   **Layer 2: Orchestration (Agent):** A LangChain ReAct agent utilizing `gemini-3.1-flash-lite` coordinates the analysis, deciding which execution tools to trigger based on the user's natural language queries.
 *   **Layer 3: Execution (Deterministic Scripts):** Modular Python scripts handle data collection (Google Play, App Store RSS, Steam Web API, Reddit PRAW), mathematical trend score computation, local SQLite snapshotting, and Plotly visualization rendering.
@@ -123,6 +148,35 @@ Where the weights are defined as:
 ### 4. Self-Correcting Quality Control Loop
 
 Reports can sometimes omit sections or fail to mention charts. ONYX implements an LLM-in-the-loop self-correction flow in `reporting/revision.py` using an evaluator assess framework based on 5 criteria:
+
+```
+           ┌───────────────────────────────┐
+           │      Generate Report Text     │
+           └───────────────┬───────────────┘
+                           │
+                           ▼
+           ┌───────────────────────────────┐
+           │    Gemini flash Evaluator     │
+           │  (Grades against 5 criteria)  │
+           └───────────────┬───────────────┘
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+       Score >= 0.7?               Score < 0.7?
+             │                           │
+             │                           ▼
+             │               ┌───────────────────────┐
+             │               │ Inject Feedback       │
+             │               │ & Run Revision Loop   │
+             │               │ (Max 2 Attempts)      │
+             │               └───────────┬───────────┘
+             │                           │
+             ├───────────────────────────┘
+             ▼
+     Display Report to UI
+```
+
+The criteria assessed by the evaluator (each yielding a $0$ or $1$ score) are:
 1.  All 3 market categories covered.
 2.  $\ge 3$ numeric data points included.
 3.  Cross-market comparison section present.
