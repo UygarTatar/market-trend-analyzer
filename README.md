@@ -14,8 +14,11 @@ pinned: true
 > An autonomous, end-to-end data engineering platform that scouts, analyzes, and reports on digital market opportunities across the global gaming and app ecosystem.
 
 **Team:** Uygar Tatar (2202400) · Muhammed Buğra Çiftçi (2101860)  
-**Course:** (BAU) SEN4018 (1) Data Science with Python 25/26 · 
-**Deployment:** [HuggingFace Spaces (Gradio)](https://huggingface.co/spaces/UygarTatar/market-trend-analyzer)  
+
+**Course:** (BAU) SEN4018 (1) Data Science with Python 25/26
+
+**Deployment:** [HuggingFace Spaces (Gradio)](https://huggingface.co/spaces/UygarTatar/market-trend-analyzer)
+
 **Project Documentation:** [📋 Executive Summary](EXECUTIVE_SUMMARY.md) · [⚙️ Practitioner's Notes](PRACTITIONERS_NOTES.md)
 
 ---
