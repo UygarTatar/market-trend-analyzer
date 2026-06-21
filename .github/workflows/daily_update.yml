@@ -26,6 +26,28 @@ jobs:
           pip install -r requirements.txt
           git lfs install
 
+      - name: Download Existing Database from HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install huggingface_hub
+          python -c "
+          import os
+          from huggingface_hub import hf_hub_download
+          try:
+              os.makedirs('database', exist_ok=True)
+              hf_hub_download(
+                  repo_id='UygarTatar/market-trend-analyzer',
+                  repo_type='space',
+                  filename='database/market_analyzer.db',
+                  local_dir='.',
+                  token='${{ secrets.HF_TOKEN }}'
+              )
+              print('Mevcut veritabanı HuggingFace üzerinden başarıyla indirildi.')
+          except Exception as e:
+              print(f'Mevcut veritabanı indirilemedi (İlk çalıştırma olabilir): {e}')
+          "
+
       - name: Run Collection Script
         run: python scripts/collect_all.py
         env:
